@@ -6,11 +6,12 @@ class CurrencyTableViewCell: UITableViewCell {
   @IBOutlet weak var currencyName: UILabel!
   @IBOutlet weak var amountTextField: UITextField!
 
-  func populate(with currency: Currency, baseAmount: Double = 0.0) {
+  func populate(with currency: Currency, baseAmount: Double, isBaseCurrency: Bool) {
     self.countryFlag.text = currency.flag
     self.countryCode.text = currency.code
     self.currencyName.text = currency.name
-    self.amountTextField.text = currency.formattedRatedAmount(baseAmount: baseAmount)
+    let amount = isBaseCurrency ? baseAmount : baseAmount * currency.rate
+    self.amountTextField.text = currency.formatted(amount: amount)
   }
 }
 

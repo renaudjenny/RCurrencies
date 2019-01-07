@@ -15,9 +15,11 @@ class currenciesTests: XCTestCase {
   func testCurrencyFormatRatedAmount() {
     let baseAmount = 100.0
     let jpyCurrency = Currency(code: "JPY", rate: 129.23)
-    XCTAssertEqual(jpyCurrency.formattedRatedAmount(baseAmount: baseAmount), "12923")
+    var ratedAmount = baseAmount * jpyCurrency.rate
+    XCTAssertEqual(jpyCurrency.formatted(amount: ratedAmount), "12923")
 
     let czkCurrency = Currency(code: "CZK", rate: 25.687)
-    XCTAssertEqual(czkCurrency.formattedRatedAmount(baseAmount: baseAmount), "2568.70")
+    ratedAmount = baseAmount * czkCurrency.rate
+    XCTAssertEqual(czkCurrency.formatted(amount: ratedAmount), "2568.70")
   }
 }

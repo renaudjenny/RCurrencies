@@ -1,7 +1,7 @@
 import Foundation
 
 class RatesRepositoryRevolut: RatesRepository {
-  static let url = URL(string: "https://revolut.duckdns.org/latest?base=EUR")
+  static let url = URLComponents(string: "https://revolut.duckdns.org/latest")
 
   lazy var jsonDecoder: JSONDecoder = {
     let decoder = JSONDecoder()
@@ -11,8 +11,11 @@ class RatesRepositoryRevolut: RatesRepository {
     return decoder
   }()
 
-  func rates(completion: @escaping (Rates?) -> Void) {
-    guard let url = RatesRepositoryRevolut.url else { fatalError("Cannot parse Revolut URL") }
+  func rates(baseCurrency currency: Currency, completion: @escaping (Rates?) -> Void) {
+    guard var urlComponents = RatesRepositoryRevolut.url else { fatalError("Cannot parse Revolut URL") }
+    urlComponents.queryItems = [URLQueryItem(name: "base", value: currency.code)]
+    guard let url = urlComponents.url else { fatalError("Cannot add base query item") }
+
     URLSession.shared.dataTask(with: url) { (data: Data?, response: URLResponse?, error: Error?) -> Void in
       guard error == nil else {
         print(error?.localizedDescription ?? "UNKNOWN ERROR")

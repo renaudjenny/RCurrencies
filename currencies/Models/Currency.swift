@@ -4,14 +4,28 @@ struct Currency: Codable {
   var code: String
   var rate: Double
 
-  func formattedRatedAmount(baseAmount: Double) -> String {
-    let numberFormatter = NumberFormatter()
-    numberFormatter.numberStyle = .currency
-    numberFormatter.currencyCode = self.code
-    numberFormatter.usesGroupingSeparator = false
-    numberFormatter.currencySymbol = ""
+  var numberFormatter: NumberFormatter {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = self.code
+    formatter.usesGroupingSeparator = false
+    formatter.currencySymbol = ""
+    return formatter
+  }
 
-    let value = baseAmount * self.rate
-    return numberFormatter.string(from: value as NSNumber) ?? "-"
+  func formatted(amount: Double) -> String {
+    return self.numberFormatter.string(from: amount as NSNumber) ?? "-"
+  }
+}
+
+extension Array where Element == Currency {
+  mutating func update(rates: Rates) {
+    for currency in rates.currencies ?? [] {
+      if let index = self.firstIndex(where: { $0.code == currency.code }) {
+        self[index] = currency
+      } else {
+        self.append(currency)
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 import Foundation
 
 protocol RatesRepository {
-  func rates(completion: @escaping (Rates?) -> Void)
+  func rates(baseCurrency: Currency, completion: @escaping (Rates?) -> Void)
 }

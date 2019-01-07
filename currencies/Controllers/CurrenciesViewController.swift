@@ -3,9 +3,12 @@ import UIKit
 class CurrenciesViewController: UITableViewController {
   static let baseCurrency = Currency(code: "EUR", rate: 1.0)
 
-  var currencies: [Currency] = []
+  var currencies: [Currency] = [CurrenciesViewController.baseCurrency]
   var ratesRepository: RatesRepository = RatesRepositoryRevolut()
   var baseAmount = 100.0
+  var selectedCurrency: Currency {
+    return self.currencies.first ?? CurrenciesViewController.baseCurrency
+  }
 
   var timer: DispatchSourceTimer? = nil
 
@@ -17,13 +20,13 @@ class CurrenciesViewController: UITableViewController {
   func setupTimer() {
     self.timer?.cancel()
     self.timer = DispatchSource.makeTimerSource()
-    self.timer?.schedule(deadline: .now(), repeating: .seconds(1))
+    let delay: DispatchTime = .now() + .seconds(1)
+    self.timer?.schedule(deadline: delay, repeating: .seconds(1))
     self.timer?.setEventHandler { [weak self] in
       guard let strongSelf = self else { return }
-      strongSelf.ratesRepository.rates { rates in
-        guard let currencies = rates?.currencies else { return }
-        strongSelf.currencies = [CurrenciesViewController.baseCurrency]
-        strongSelf.currencies.append(contentsOf: currencies)
+      strongSelf.ratesRepository.rates(baseCurrency: strongSelf.selectedCurrency) { rates in
+        guard let rates = rates else { return }
+        strongSelf.currencies.update(rates: rates)
         strongSelf.tableView.reloadData()
       }
     }
@@ -47,8 +50,29 @@ extension CurrenciesViewController {
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let dequeuedCell = self.tableView.dequeueReusableCell(withIdentifier: CurrenciesViewController.cellIdentifier, for: indexPath)
     guard let cell = dequeuedCell as? CurrencyTableViewCell else { return dequeuedCell }
-    cell.populate(with: self.currencies[indexPath.row], baseAmount: self.baseAmount)
+    let currency = self.currencies[indexPath.row]
+    cell.populate(
+      with: currency,
+      baseAmount: self.baseAmount,
+      isBaseCurrency: currency.code == self.selectedCurrency.code
+    )
     return cell
+  }
+
+  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let firstIndexPath = IndexPath(row: 0, section: 0)
+    guard indexPath != firstIndexPath else { return }
+
+    self.timer?.cancel()
+
+    let currency = self.currencies[indexPath.row]
+    self.baseAmount = self.baseAmount * currency.rate
+    self.currencies.remove(at: indexPath.row)
+    self.currencies.insert(currency, at: 0)
+
+    self.tableView.moveRow(at: indexPath, to: firstIndexPath)
+    self.tableView.scrollToRow(at: firstIndexPath, at: .top, animated: true)
+    self.setupTimer()
   }
 }
 
