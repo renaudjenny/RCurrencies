@@ -1,6 +1,8 @@
 import UIKit
 
 class CurrenciesViewController: UITableViewController {
+  static let baseCurrency = Currency(code: "EUR", rate: 1.0)
+
   var currencies: [Currency] = []
   var ratesRepository: RatesRepository = RatesRepositoryRevolut()
   var baseAmount = 100.0
@@ -12,7 +14,8 @@ class CurrenciesViewController: UITableViewController {
       guard
         let strongSelf = self,
         let currencies = rates?.currencies else { return }
-      strongSelf.currencies = currencies
+      strongSelf.currencies = [CurrenciesViewController.baseCurrency]
+      strongSelf.currencies.append(contentsOf: currencies)
       strongSelf.tableView.reloadData()
     }
   }
