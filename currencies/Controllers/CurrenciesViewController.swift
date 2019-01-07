@@ -7,22 +7,18 @@ class CurrenciesViewController: UITableViewController {
   var ratesRepository: RatesRepository = RatesRepositoryRevolut()
   var baseAmount = 100.0
 
-  var timer = DispatchSource.makeTimerSource()
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-
-    self.setupTimer()
-  }
+  var timer: DispatchSourceTimer? = nil
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    self.timer.resume()
+    self.setupTimer()
   }
 
   func setupTimer() {
-    self.timer.schedule(deadline: .now(), repeating: .seconds(1))
-    self.timer.setEventHandler { [weak self] in
+    self.timer?.cancel()
+    self.timer = DispatchSource.makeTimerSource()
+    self.timer?.schedule(deadline: .now(), repeating: .seconds(1))
+    self.timer?.setEventHandler { [weak self] in
       guard let strongSelf = self else { return }
       strongSelf.ratesRepository.rates { rates in
         guard let currencies = rates?.currencies else { return }
@@ -31,11 +27,12 @@ class CurrenciesViewController: UITableViewController {
         strongSelf.tableView.reloadData()
       }
     }
+    self.timer?.resume()
   }
 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
-    self.timer.cancel()
+    self.timer?.cancel()
   }
 }
 
@@ -52,5 +49,22 @@ extension CurrenciesViewController {
     guard let cell = dequeuedCell as? CurrencyTableViewCell else { return dequeuedCell }
     cell.populate(with: self.currencies[indexPath.row], baseAmount: self.baseAmount)
     return cell
+  }
+}
+
+// MARK: Scroll View
+extension CurrenciesViewController {
+  override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    self.timer?.cancel()
+  }
+
+  override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    guard let timer = self.timer, timer.isCancelled else { return }
+    self.setupTimer()
+  }
+
+  override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    guard !decelerate, let timer = self.timer, timer.isCancelled else { return }
+    self.setupTimer()
   }
 }
