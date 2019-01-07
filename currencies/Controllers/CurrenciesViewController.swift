@@ -7,17 +7,35 @@ class CurrenciesViewController: UITableViewController {
   var ratesRepository: RatesRepository = RatesRepositoryRevolut()
   var baseAmount = 100.0
 
+  var timer = DispatchSource.makeTimerSource()
+
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    self.ratesRepository.rates { [weak self] rates in
-      guard
-        let strongSelf = self,
-        let currencies = rates?.currencies else { return }
-      strongSelf.currencies = [CurrenciesViewController.baseCurrency]
-      strongSelf.currencies.append(contentsOf: currencies)
-      strongSelf.tableView.reloadData()
+    self.setupTimer()
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    self.timer.resume()
+  }
+
+  func setupTimer() {
+    self.timer.schedule(deadline: .now(), repeating: .seconds(1))
+    self.timer.setEventHandler { [weak self] in
+      guard let strongSelf = self else { return }
+      strongSelf.ratesRepository.rates { rates in
+        guard let currencies = rates?.currencies else { return }
+        strongSelf.currencies = [CurrenciesViewController.baseCurrency]
+        strongSelf.currencies.append(contentsOf: currencies)
+        strongSelf.tableView.reloadData()
+      }
     }
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    self.timer.cancel()
   }
 }
 
