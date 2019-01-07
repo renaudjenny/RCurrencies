@@ -3,6 +3,7 @@ import UIKit
 class CurrenciesViewController: UITableViewController {
   var currencies: [Currency] = []
   var ratesRepository: RatesRepository = RatesRepositoryRevolut()
+  var baseAmount = 100.0
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -28,7 +29,7 @@ extension CurrenciesViewController {
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let dequeuedCell = self.tableView.dequeueReusableCell(withIdentifier: CurrenciesViewController.cellIdentifier, for: indexPath)
     guard let cell = dequeuedCell as? CurrencyTableViewCell else { return dequeuedCell }
-    cell.populate(with: self.currencies[indexPath.row])
+    cell.populate(with: self.currencies[indexPath.row], baseAmount: self.baseAmount)
     return cell
   }
 }

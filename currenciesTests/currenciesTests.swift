@@ -11,4 +11,13 @@ class currenciesTests: XCTestCase {
       try RatesRepositoryRevolut().jsonDecoder.decode(Rates.self, from: stream.data(using: .utf8)!)
     )
   }
+
+  func testCurrencyFormatRatedAmount() {
+    let baseAmount = 100.0
+    let jpyCurrency = Currency(code: "JPY", rate: 129.23)
+    XCTAssertEqual(jpyCurrency.formattedRatedAmount(baseAmount: baseAmount), "12923")
+
+    let czkCurrency = Currency(code: "CZK", rate: 25.687)
+    XCTAssertEqual(czkCurrency.formattedRatedAmount(baseAmount: baseAmount), "2568.70")
+  }
 }
