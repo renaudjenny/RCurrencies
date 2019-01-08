@@ -43,6 +43,8 @@ class CurrenciesViewController: UITableViewController {
     let isCurrenciesSizeChanged = currenciesCountBeforeUpdate != self.currencies.count
     if isCurrenciesSizeChanged {
       self.tableView.reloadData()
+      self.tableView.tableFooterView?.isHidden = true
+      self.tableView.tableFooterView?.frame = .zero
     } else {
       self.reloadTableViewVisibleRows()
     }

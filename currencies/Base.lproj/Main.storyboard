@@ -13,10 +13,24 @@
         <scene sceneID="IMH-qU-LQ6">
             <objects>
                 <tableViewController id="jhv-md-kl7" customClass="CurrenciesViewController" customModule="currencies" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="xRh-xF-uyA">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" id="xRh-xF-uyA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="uXM-CV-Bp8">
+                            <rect key="frame" x="0.0" y="148" width="375" height="500"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="SXp-HJ-cnx">
+                                    <rect key="frame" x="177.5" y="240" width="20" height="20"/>
+                                </activityIndicatorView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="SXp-HJ-cnx" firstAttribute="centerX" secondItem="uXM-CV-Bp8" secondAttribute="centerX" id="WhE-tH-smX"/>
+                                <constraint firstItem="SXp-HJ-cnx" firstAttribute="centerY" secondItem="uXM-CV-Bp8" secondAttribute="centerY" id="cHc-ZB-Ifx"/>
+                            </constraints>
+                        </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="CurrenciesViewControllerCellIdentifier" rowHeight="120" id="bkY-fF-6mv" customClass="CurrencyTableViewCell" customModule="currencies" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="120"/>
@@ -26,7 +40,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="🇬🇧" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rvj-EJ-wg6">
-                                            <rect key="frame" x="16" y="16" width="34" height="88"/>
+                                            <rect key="frame" x="16" y="42" width="34" height="36"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -59,7 +73,7 @@
                                             </constraints>
                                         </view>
                                         <textField opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="99,79" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uaq-Pc-5dX">
-                                            <rect key="frame" x="163" y="16" width="196" height="88"/>
+                                            <rect key="frame" x="163" y="44" width="196" height="32"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                             <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
@@ -69,14 +83,8 @@
                                         </textField>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Jd1-5C-7xZ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="NUH-rh-N3n" secondAttribute="top" constant="16" id="6D9-WS-FjH"/>
-                                        <constraint firstAttribute="bottom" secondItem="uaq-Pc-5dX" secondAttribute="bottom" constant="16" id="9gV-V7-beB"/>
                                         <constraint firstItem="Jd1-5C-7xZ" firstAttribute="leading" secondItem="rvj-EJ-wg6" secondAttribute="trailing" constant="16" id="AeB-mK-sHJ"/>
-                                        <constraint firstItem="rvj-EJ-wg6" firstAttribute="top" secondItem="NUH-rh-N3n" secondAttribute="top" constant="16" id="EOF-1n-01S"/>
-                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Jd1-5C-7xZ" secondAttribute="bottom" constant="16" id="JGv-46-Ci4"/>
-                                        <constraint firstItem="uaq-Pc-5dX" firstAttribute="top" secondItem="NUH-rh-N3n" secondAttribute="top" constant="16" id="XtT-CU-MWU"/>
                                         <constraint firstItem="rvj-EJ-wg6" firstAttribute="centerY" secondItem="NUH-rh-N3n" secondAttribute="centerY" id="Yjw-gV-zt3"/>
-                                        <constraint firstAttribute="bottom" secondItem="rvj-EJ-wg6" secondAttribute="bottom" constant="16" id="eb9-qk-160"/>
                                         <constraint firstAttribute="trailing" secondItem="uaq-Pc-5dX" secondAttribute="trailing" constant="16" id="eza-Um-tu5"/>
                                         <constraint firstItem="uaq-Pc-5dX" firstAttribute="centerY" secondItem="NUH-rh-N3n" secondAttribute="centerY" id="hCP-pH-iCu"/>
                                         <constraint firstItem="uaq-Pc-5dX" firstAttribute="leading" secondItem="Jd1-5C-7xZ" secondAttribute="trailing" constant="16" id="iLk-jx-hSw"/>
