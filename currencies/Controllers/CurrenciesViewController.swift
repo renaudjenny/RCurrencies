@@ -44,8 +44,7 @@ class CurrenciesViewController: UITableViewController {
     if isCurrenciesSizeChanged {
       self.tableView.reloadData()
     } else {
-      guard let visibleIndexPaths = self.tableView.indexPathsForVisibleRows else { return }
-      self.tableView.reloadRows(at: Array(visibleIndexPaths.dropFirst()), with: .none)
+      self.reloadTableViewVisibleRows()
     }
   }
 
@@ -61,6 +60,14 @@ class CurrenciesViewController: UITableViewController {
 
   func resignFirstCellResponder() {
     self.firstCell?.amountTextField.resignFirstResponder()
+  }
+
+  func reloadTableViewVisibleRows() {
+    guard var visibleIndexPaths = self.tableView.indexPathsForVisibleRows else { return }
+    if visibleIndexPaths.first?.row == 0 {
+      visibleIndexPaths = Array(visibleIndexPaths.dropFirst())
+    }
+    self.tableView.reloadRows(at: visibleIndexPaths, with: .none)
   }
 }
 
@@ -126,5 +133,47 @@ extension CurrenciesViewController {
   override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
     guard !decelerate, let timer = self.timer, timer.isCancelled else { return }
     self.setupTimer()
+  }
+}
+
+// MARK: Text Field
+extension CurrenciesViewController {
+  @IBAction func amountChanged(_ sender: Any) {
+    guard let textField = sender as? UITextField, let newAmountString = textField.text else { return }
+    guard let newAmount = self.selectedCurrency.double(from: newAmountString) else {
+      textField.text = "0"
+      self.baseAmount = 0.0
+      return
+    }
+    self.baseAmount = newAmount
+
+    self.preventWrongAmountTyping(textField: textField, newAmount: newAmount)
+    self.reloadTableViewVisibleRows()
+  }
+
+  func preventWrongAmountTyping(textField: UITextField, newAmount: Double) {
+    let amountString = textField.text ?? "0"
+    let formattedString = self.selectedCurrency.formattedForEdit(amount: newAmount)
+
+    if amountString.starts(with: "0") && !amountString.starts(with: "0."), let withoutFirstZeroAmountString = textField.text?.dropFirst() {
+      textField.text = String(withoutFirstZeroAmountString)
+    }
+
+    if amountString.count > formattedString.count {
+      textField.text = formattedString
+    }
+  }
+}
+
+private extension Currency {
+  func formattedForEdit(amount: Double) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = self.code
+    formatter.usesGroupingSeparator = false
+    formatter.currencySymbol = ""
+    formatter.alwaysShowsDecimalSeparator = false
+    formatter.generatesDecimalNumbers = false
+    return formatter.string(from: amount as NSNumber) ?? "0"
   }
 }

@@ -16,6 +16,10 @@ struct Currency: Codable {
   func formatted(amount: Double) -> String {
     return self.numberFormatter.string(from: amount as NSNumber) ?? "-"
   }
+
+  func double(from string: String) -> Double? {
+    return self.numberFormatter.number(from: string) as? Double
+  }
 }
 
 extension Array where Element == Currency {
