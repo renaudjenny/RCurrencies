@@ -12,6 +12,16 @@ class CurrencyTableViewCell: UITableViewCell {
     self.currencyName.text = currency.name
     let amount = isBaseCurrency ? baseAmount : baseAmount * currency.rate
     self.amountTextField.text = currency.formatted(amount: amount)
+    self.preventWrongDisplayOfAmount()
+  }
+
+  private func preventWrongDisplayOfAmount() {
+    guard let text = self.amountTextField.text as NSString?, let font = self.amountTextField.font else { return }
+
+    let textWidth = text.size(withAttributes: [.font: font]).width
+    if textWidth > self.amountTextField.bounds.width {
+      self.amountTextField.text = "...⚠️..."
+    }
   }
 }
 
