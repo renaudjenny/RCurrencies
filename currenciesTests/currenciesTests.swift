@@ -22,4 +22,23 @@ class currenciesTests: XCTestCase {
     ratedAmount = baseAmount * czkCurrency.rate
     XCTAssertEqual(czkCurrency.formatted(amount: ratedAmount), "2568.70")
   }
+
+  func testCurrencyConvertAmountStringToDouble() {
+    let czkCurrency = Currency(code: "CZK", rate: 25.687)
+    let stringAmount = "180.42"
+    XCTAssertEqual(czkCurrency.double(from: stringAmount), 180.42)
+  }
+
+  func testUpdateListOfCurrencyWithNewRates() {
+    let newRates = Rates(base: "EUR", date: Date(), rates: ["JPY": 129.23, "CZK": 25.687])
+    var currencies = [
+      Currency(code: "EUR", rate: 1.0),
+      Currency(code: "JPY", rate: 123.19)
+    ]
+    currencies.update(rates: newRates)
+    XCTAssertEqual(currencies[1].rate, 129.23)
+    XCTAssertEqual(currencies.count, 3)
+    XCTAssertEqual(currencies[2].code, "CZK")
+    XCTAssertEqual(currencies[2].rate, 25.687)
+  }
 }
